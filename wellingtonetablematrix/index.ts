@@ -50,12 +50,6 @@ export class wellingtonetablematrix implements ComponentFramework.StandardContro
 		context.client.disableScroll = false;
 		context.mode.trackContainerResize(true);
 		this.renderControl(context);
-
-		console.log(this._recordId);
-		// .then(res => {
-		// 	console.log('risk data results');
-		// 	console.log(res);
-		// })
 	}
 
 	private renderControl(context: ComponentFramework.Context<IInputs>) : void
@@ -67,10 +61,9 @@ export class wellingtonetablematrix implements ComponentFramework.StandardContro
 				if (context.updatedProperties.includes("controlProperties")) {
 					let tableName = (<any>this._config).tableName;
 					let fields = (<any>this._config).itemTitle + ',' + (<any>this._config).xFieldName + ',' + (<any>this._config).yFieldName;
-					let parentFieldLookupName = (<any>this._config).parentFieldLookupName
-					this._rawData = await this.getTableData(context, tableName, fields, this._recordId, parentFieldLookupName);
-					console.log('api call back received')
-					console.log(this._rawData);
+					let parentFieldLookupName = (<any>this._config).parentFieldLookupName;
+					let filters = this.processFilters(<any>(this._config)?.filterRules);
+					this._rawData = await this.getTableData(context, tableName, fields, this._recordId, parentFieldLookupName, filters.filters, filters.filterFields);
 				}
 			} else {
 				this._rawData = this.dummyDataHelper.dummyData
@@ -79,8 +72,6 @@ export class wellingtonetablematrix implements ComponentFramework.StandardContro
 		}).then(() => {
 			if (this._rawData) {
 				this._props = this.processData(this._rawData, this._config);
-				console.log('props')
-				console.log(this._props);
 				ReactDOM.render(
 					React.createElement(App, this._props),
 					this._container
@@ -121,18 +112,61 @@ export class wellingtonetablematrix implements ComponentFramework.StandardContro
 		// Add code to cleanup control if necessary
 	}
 
+	private processFilters(filterRules: Array<Array<string | number>>): {filters: string; filterFields:string}
+	{
+		let filters = '';
+		let filterFields = '';
+		if (!filterRules || filterRules.length == 0) return {filters: '', filterFields: ''}
 
-	private getTableData(context: ComponentFramework.Context<IInputs>, tableName:string, fields:string, recordId:string, parentFieldLookupName:string):Promise<Array<any>> {
+		for(var i=0; i< filterRules.length; i++)
+		{
+			if (i !== 0) 
+				filters += ` and `
+			
+			switch(filterRules[i][1]) {
+				case '==':
+					filters += `(${filterRules[i][0]} eq ${filterRules[i][2]})`
+				break;
+				case '>':
+					filters += `(${filterRules[i][0]} gt ${filterRules[i][2]})`
+				break;
+				case '<':
+					filters += `(${filterRules[i][0]} lt ${filterRules[i][2]})`
+				break;
+			}
+			
+			if(i==0) {
+				filterFields += filterRules[i][0];
+			} else {
+				filterFields += `,${filterRules[i][0]}`
+			}
+		}
+		return {filters, filterFields};
+	}
+
+	private getTableData(context: ComponentFramework.Context<IInputs>, tableName:string, fields:string, recordId:string, parentFieldLookupName:string, filters:string, filterFields:string):Promise<Array<any>> {
 		// https://org3701e36e.crm5.dynamics.com/api/data/v9.1/
-		console.log('getting data')
-		let odataEndPoint = `?$select=${fields},_${parentFieldLookupName}_value&$filter=_${parentFieldLookupName}_value eq ${recordId}`;
+		let filter = '';
+		if (filters.length > 0) {
+			filter += `(_${parentFieldLookupName}_value eq ${recordId}) and ${filters}`
+		} else {
+			filter = `_${parentFieldLookupName}_value eq ${recordId}`
+		}
+
+		let select = '';
+		if(filterFields.length > 0) {
+			select = `${fields},_${parentFieldLookupName}_value,${filterFields}`
+		} else {
+			select = `${fields},_${parentFieldLookupName}_value`
+		}
+		let odataEndPoint = `?$select=${select}&$filter=${filter}`;
+
 		return new Promise((resolve, reject) => {
 			// context.webAPI.retrieveMultipleRecords('msdyn_projectrisk', `?$select=msdyn_name,wmencap_impact,wmencap_probability,wmencap_exposure,_msdyn_project_value&$filter=_msdyn_project_value eq 9a4e039a-45a2-eb11-b1ac-0022489c1375`, 10000)
 			context.webAPI.retrieveMultipleRecords(tableName, odataEndPoint, 10000)
 			.then((res) => {
 				if(res &&
 					res.entities) {
-						console.log(res.entities);
 						resolve(res.entities as Array<any>)
 					}
 			},
@@ -218,7 +252,7 @@ export class wellingtonetablematrix implements ComponentFramework.StandardContro
 			.count ++;
 		})
 
-			const groupedData = itemData.reduce((groupedRisks:any, item:any, index:number, array:Array<any>) => {
+		const groupedData = itemData.reduce((groupedRisks:any, item:any, index:number, array:Array<any>) => {
 			const group = item.x.toString() + '-' + item.y.toString();
 
 			if(groupedRisks[group] == null) groupedRisks[group] = [];
@@ -230,15 +264,6 @@ export class wellingtonetablematrix implements ComponentFramework.StandardContro
 		return {
 			summaryData, itemData, groupedData, config
 		}
-		// return _data.reduce(function(groupedRisks:any, risk) {
-		//   groupedRisks.push({
-		//     x: risk.x,
-		//     y: risk.y,
-		//     total: risk.total,
-		//     title: risk.title
-		//   });
-		//   console.log(groupedRisks)
-		// }, [])
 	}
 
 	private getColour = (x:number, y: number, colours:Array<any>) => {

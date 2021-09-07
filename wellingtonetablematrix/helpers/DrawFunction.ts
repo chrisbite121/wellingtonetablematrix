@@ -80,41 +80,13 @@ export const draw = (d3Container:any, tooltipContainer:any, config: any, itemDat
     var mousemove = function(event: any, d:any) {
         d3.select(event.currentTarget).style("opacity", 0.5);
         d3.select(event.currentTarget).style("cursor", "pointer")
-
-        // tooltip3
-        //     .attr("transform", function(d:any) {
-        //         let x = event.offsetX;
-        //         let y = event.offsetY + -20;
-        //         return "translate(" + x + "," + y + ")"
-        //     })
-        //     // .text("")
-        //     .selectAll("*")
-        //     .remove()
-
-        // if(groupedData[d.x + "-" + d.y]) 
-        // {
-        //     groupedData[d.x + "-" + d.y].forEach((item:any, i:number) => {
-        //         tooltip3
-        //         .append("tspan")
-        //         .text(item.title)
-        //         .attr("dy", i == 0 ? "0": "20")
-        //         .attr("x", "1")
-        //         .attr("transform", function(d:any) {
-        //             let x = event.offsetX;
-        //             let y = event.offsetY + -20;
-        //             return "translate(" + x + "," + y + ")"
-        //         })
-                
-        //     })
-        // }
-        
+       
         if(generateTooltipHtml(d.x + "-" + d.y).length>0)
         {
             tooltip
             .html(generateTooltipHtml(d.x + "-" + d.y))
             .style("left", (event.offsetX+40) + "px")
             .style("top", (event.offsetY - 50) + "px")
-            console.log(event)
         }
         else {
             tooltip.style("opacity", 0);
@@ -124,16 +96,7 @@ export const draw = (d3Container:any, tooltipContainer:any, config: any, itemDat
     var mouseleave = function(event:any, d:any) {
         d3.select(event.currentTarget).style("opacity", 1);
         tooltip.style("opacity", 0);
-        
-        // tooltip3
-        // .attr("transform", function(d:any) {
-        //     let x = event.offsetX;
-        //     let y = event.offsetY + -20;
-        //     return "translate(" + x + "," + y + ")"
-        // })
-        // // .text("")
-        // .selectAll("*")
-        // .remove()        
+     
     }
 
     const matrix = svg.selectAll()
@@ -169,11 +132,11 @@ export const draw = (d3Container:any, tooltipContainer:any, config: any, itemDat
 
 
     //svg tooltip test
-    var tooltip3 = svg.append("text")
-        .attr('id', 'mycustomtooltip')
-        .style("font-size", "16px")
-        .style("font-weight", "bold")
-        .style("z-index", 10)
+    // var tooltip3 = svg.append("text")
+    //     .attr('id', 'mycustomtooltip')
+    //     .style("font-size", "16px")
+    //     .style("font-weight", "bold")
+    //     .style("z-index", 10)
 
     const tooltip = d3.select(tooltipContainer.current)
     .append("div")
@@ -193,10 +156,24 @@ export const draw = (d3Container:any, tooltipContainer:any, config: any, itemDat
     const generateTooltipHtml = (ref:string) => {
         if(!groupedData[ref]) return ''
         let _html = "<div style='text-align:left;z-index:inherit'><ul style='list-style-type: square;padding-left:17px;z-index:inherit'>"
-            groupedData[ref].forEach((risk:any) => {
-                _html += `<li>${risk.title}</li>`
-            })
-        _html += "</ul></div>"
+        let i = 0;
+        for (let risk of groupedData[ref])
+        {
+            if(i<20) {
+                _html += `<li>${risk.title}</li>`;
+                i++;
+            } else {
+                break;
+            }
+        };
+
+        if (i==20) {
+            _html += `</ul>...</div>`;
+        } else {
+            _html += "</ul></div>"
+        }
+
+        
         return _html
     }
 }

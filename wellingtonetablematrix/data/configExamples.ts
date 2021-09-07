@@ -2,6 +2,7 @@
 
 		//examples
 		// {
+		// 	"version": 0.9,
 		// 	"chartTitle": "Issue Matrix",
 		// 	"xTitle": "Original Impact",
 		// 	"xFieldName": "wpm_originalimpact",
@@ -22,7 +23,7 @@
 		// 	  ["High", "Medium", "#f01a97"]
 		// 	],
 		// 	"itemTitle": "msdyn_name",
-		// 	"parentLookupName": "msdyn_project",
+		// 	"parentFieldLookupName": "msdyn_project",
 		// 	"maxWidth": 500,
 		// 	"maxHeight": 500,
 		// 	"choiceFieldMapping": {"431280002": "Low",  "431280001": "Medium", "431280000":"High"},
@@ -31,6 +32,7 @@
 		  
 		  
 		//   {
+		//	"version": 0.9,
 		// 	"chartTitle": "Risk Matrix",
 		// 	"xTitle": "Impact",
 		// 	"xFieldName": "wpm_impact",
@@ -46,8 +48,64 @@
 		// 	  [15, "#d6a018"],
 		// 	  [25, "#cf0000"]
 		// 	],
+		
 		// 	"itemTitle": "msdyn_name",
-		// 	"parentTableLookupName": "msdyn_project",
+		// 	"parentFieldLookupName": "msdyn_project",
 		// 	"maxWidth": 450,
 		// 	"maxHeight": 450
 		//   }
+
+
+		// {
+		// 	"version": 1.0,
+		// 	"chartTitle": "Risk Matrix",
+		// 	"xTitle": "Impact",
+		// 	"xFieldName": "wmencap_impact",
+		// 	"xDomain": [1,2,3,4,5],
+		// 	"yTitle": "Probability",
+		// 	"yFieldName": "wmencap_probability",
+		// 	"yRange": [1,2,3,4,5],
+		// 	"tableName": "msdyn_projectrisk",
+		// 	"filterRules": [
+		// 		["wmencap_riskstatus","==",145830000]
+		// 	],
+		// 	"colourRules": [
+		// 	  [1, 5, "#cf0000"],
+		// 	  [5, 1, "#cf0000"],
+		// 	  [6, "#057a2c"],
+		// 	  [15, "#d6a018"],
+		// 	  [25, "#cf0000"]
+		// 	],
+		// 	"itemTitle": "msdyn_name",
+		// 	"parentFieldLookupName": "msdyn_project",
+		// 	"maxWidth": 450,
+		// 	"maxHeight": 450
+		// }
+
+		// {
+		// 	"version": 1.0,
+		// 	"chartTitle": "Risk Matrix",
+		// 	"xTitle": "Impact",
+		// 	"xFieldName": "wmencap_impact",
+		// 	"xDomain": [1,2,3,4,5],
+		// 	"yTitle": "Probability",
+		// 	"yFieldName": "wmencap_probability",
+		// 	"yRange": [1,2,3,4,5],
+		// 	"tableName": "msdyn_projectrisk",
+		// 	"filterRules": [
+		// 		["wmencap_riskstatus","==",145830000],
+		// 		["msdyn_name","==","'risk 4a'"]
+		// 	],
+		// 	"colourRules": [
+		// 	  [1, 5, "#cf0000"],
+		// 	  [5, 1, "#cf0000"],
+		// 	  [6, "#057a2c"],
+		// 	  [15, "#d6a018"],
+		// 	  [25, "#cf0000"]
+		// 	],
+		// 	"itemTitle": "msdyn_name",
+		// 	"parentFieldLookupName": "msdyn_project",
+		// 	"maxWidth": 450,
+		// 	"maxHeight": 450
+		// }		
+

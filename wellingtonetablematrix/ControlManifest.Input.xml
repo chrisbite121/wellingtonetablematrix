@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <manifest>
-  <control namespace="wellingtonetablematrix" constructor="wellingtonetablematrix" version="0.0.7" display-name-key="wellingtonetablematrix" description-key="wellingtonetablematrix description" control-type="standard">
+  <control namespace="wellingtonetablematrix" constructor="wellingtonetablematrix" version="0.0.8" display-name-key="wellingtonetablematrix" description-key="wellingtonetablematrix description" control-type="standard">
     <!-- property node identifies a specific, configurable piece of data that the control expects from CDS -->
     <property name="matrixTable" display-name-key="matrixTable" description-key="matrix table placeholder field" of-type="SingleLine.Text" usage="bound" required="true" />
     <property name="controlProperties" display-name-key="Control_Properties" description-key="Config for this control" of-type="Multiple" usage="input" required="true" />
