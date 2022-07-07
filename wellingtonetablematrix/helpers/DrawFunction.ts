@@ -109,13 +109,29 @@ export const draw = (d3Container:any, tooltipContainer:any, config: any, itemDat
         .on("mousemove", mousemove)
         .on("mouseleave", mouseleave)   
 
+    // matrix
+    //     .append("rect")
+    //     .attr("x", function(d:any) { return x(d.x) })
+    //     .attr("y", function(d:any) { return y(d.y) })
+    //     .attr("width", x.bandwidth() )
+    //     .attr("height", y.bandwidth() )
+    //     .style("fill", function(d:any) { return d.colour } )
+    //     .style("opacity",0)
+    //     .transition().duration(2000).ease(d3.easeLinear).style("opacity", 1)
+
     matrix
-        .append("rect")
-        .attr("x", function(d:any) { return x(d.x) })
-        .attr("y", function(d:any) { return y(d.y) })
-        .attr("width", x.bandwidth() )
-        .attr("height", y.bandwidth() )
-        .style("fill", function(d:any) { return d.colour } )
+    .append("rect")
+    .attr("x", function(d:any) { return x(d.x) + (x.bandwidth() / 2) })
+    .attr("y", function(d:any) { return y(d.y) + (y.bandwidth() / 2)})
+
+    .style("fill", function(d:any) { return d.colour } )
+    .style("opacity",0)
+    .transition().duration(2000).ease(d3.easeLinear)
+    .style("opacity", 1)
+    .attr("width", x.bandwidth() )
+    .attr("height", y.bandwidth() )
+    .attr("x", function(d:any) { return x(d.x) })
+    .attr("y", function(d:any) { return y(d.y) })
 
     
 

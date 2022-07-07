@@ -161,10 +161,14 @@ export class wellingtonetablematrix implements ComponentFramework.StandardContro
 		}
 		let odataEndPoint = `?$select=${select}&$filter=${filter}`;
 
+		console.log(tableName);
+		console.log(odataEndPoint);
+
 		return new Promise((resolve, reject) => {
 			// context.webAPI.retrieveMultipleRecords('msdyn_projectrisk', `?$select=msdyn_name,wmencap_impact,wmencap_probability,wmencap_exposure,_msdyn_project_value&$filter=_msdyn_project_value eq 9a4e039a-45a2-eb11-b1ac-0022489c1375`, 10000)
-			context.webAPI.retrieveMultipleRecords(tableName, odataEndPoint, 10000)
+			context.webAPI.retrieveMultipleRecords(tableName, odataEndPoint, 5000)
 			.then((res) => {
+				console.log(res);
 				if(res &&
 					res.entities) {
 						resolve(res.entities as Array<any>)
@@ -222,42 +226,51 @@ export class wellingtonetablematrix implements ComponentFramework.StandardContro
 		});
 
 		const itemData = data.map((item: any) => {
-			let _xVal = item[config.xFieldName];
-			let _yVal = item[config.yFieldName];
-
-			//if using optionsets replace internal number values with mapped display values
-			if (config.choiceFieldMapping
-			&& typeof(config.choiceFieldMapping) == 'object' 
-			&& Object.keys(config.choiceFieldMapping).length > 0)
-			{
-				if(config.choiceFieldMapping[_xVal.toString()])
-					_xVal = config.choiceFieldMapping[_xVal.toString()];
-				
-				if(config.choiceFieldMapping[_yVal.toString()])
-					_yVal = config.choiceFieldMapping[_yVal.toString()];
+			try {
+				let _xVal = item[config.xFieldName];
+				let _yVal = item[config.yFieldName];
+	
+				//if using optionsets replace internal number values with mapped display values
+				if (config.choiceFieldMapping
+				&& typeof(config.choiceFieldMapping) == 'object' 
+				&& Object.keys(config.choiceFieldMapping).length > 0)
+				{
+					if(config.choiceFieldMapping[_xVal.toString()])
+						_xVal = config.choiceFieldMapping[_xVal.toString()];
+					
+					if(config.choiceFieldMapping[_yVal.toString()])
+						_yVal = config.choiceFieldMapping[_yVal.toString()];
+				}
+	
+				return {
+					x: _xVal,
+					y: _yVal,
+					title: item[config.itemTitle]
+				} as idata;
+			} catch (e) {
+				console.error('data item failed', item)
 			}
 
-			return {
-				x: _xVal,
-				y: _yVal,
-				title: item[config.itemTitle]
-			} as idata;
 		});
 
 		//add total value
 		itemData.forEach((item:any) => {
-			summaryData.filter(entry => {
-			return entry.x == item.x && entry.y == item.y
-			})[0]
-			.count ++;
+			const _filtered = summaryData.filter(entry => {
+				return entry.x == item.x && entry.y == item.y
+			})
+			if(_filtered && _filtered.length > 0) {
+				//add 1 to count
+				_filtered[0].count++
+			}
+			
 		})
 
 		const groupedData = itemData.reduce((groupedRisks:any, item:any, index:number, array:Array<any>) => {
-			const group = item.x.toString() + '-' + item.y.toString();
-
-			if(groupedRisks[group] == null) groupedRisks[group] = [];
-
-			groupedRisks[group].push(item)
+			if(item.x && item.y) {
+				const group = item.x.toString() + '-' + item.y.toString();
+				if(groupedRisks[group] == null) groupedRisks[group] = [];
+				groupedRisks[group].push(item)
+			}
 			return groupedRisks
 		}, {})
 		
@@ -272,12 +285,14 @@ export class wellingtonetablematrix implements ComponentFramework.StandardContro
 			case(2):
 			//where a rule of length 2 is defined
 			//it is assumed the 2 measures are numbers
+			//rule of length 2 implies threshold is <= example [6, "#057a2c"],
 				if((+x)*(+y) <= colours[i][0]) {
 				return colours[i][1];
 				}
 			break;
 			case(3):
 			//if rule is of length 3 then we can handle string or number values
+			//rule of length 3 implies both x and y equals rule value [1, 5, "#cf0000"],
 				if(x == colours[i][0] && y == colours[i][1]) {
 				return colours[i][2];
 				}

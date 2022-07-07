@@ -109,3 +109,26 @@
 		// 	"maxHeight": 450
 		// }		
 
+		// {
+		// 	"version": 1.0,
+		// 	"chartTitle": "Risk Matrix",
+		// 	"xTitle": "Impact",
+		// 	"xFieldName": "wpm_impact",
+		// 	"xDomain": [1,2,3,4,5],
+		// 	"yTitle": "Probability",
+		// 	"yFieldName": "wpm_probability",
+		// 	"yRange": [1,2,3,4,5],
+		// 	"tableName": "msdyn_projectrisk",
+		// 	"colourRules": [
+		// 	  [8, "#057a2c"],
+		// 	  [15, "#d6a018"],
+		// 	  [25, "#cf0000"]
+		// 	],
+        //     "filterRules": [
+		// 		["wpm_status","==",100000000]
+		// 	],
+		// 	"itemTitle": "msdyn_name",
+		// 	"parentFieldLookupName": "msdyn_project",
+		// 	"maxWidth": 450,
+		// 	"maxHeight": 450
+		//   }
